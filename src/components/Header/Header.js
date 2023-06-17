@@ -1,0 +1,106 @@
+import React from 'react';
+import Container from 'react-bootstrap/Container';
+import Nav from 'react-bootstrap/Nav';
+import Navbar from 'react-bootstrap/Navbar';
+import { NavLink, Link } from 'react-router-dom';
+import imglogo from '../images/Iiuc-logo.png';
+import '../Header/Header.css'
+import { useAuthState } from 'react-firebase-hooks/auth';
+import { signOut } from 'firebase/auth';
+import auth from '../firebase.init';
+import useAdmin from '../Hooks/useAdmin';
+
+const Header = () => {
+    const [user, loading, error] = useAuthState(auth);
+    const [admin] = useAdmin(user);
+    console.log(user);
+
+    return (
+        <div className='sticky-top' >
+            <Navbar collapseOnSelect expand="lg" bg="dark" variant="dark" >
+                <Container>
+                    <div><Navbar.Brand href="#home">IIIU</Navbar.Brand>
+                        <Link to='/'><img className='img-logo' src={imglogo} alt="#" /></Link>
+                    </div>
+                    <Navbar.Toggle aria-controls="responsive-navbar-nav" />
+                    <Navbar.Collapse id="responsive-navbar-nav">
+                        <Nav className="ms-auto fw-bold">
+                            <NavLink className={({ isActive }) => isActive ? "active-link" : "link"}
+                                to="/mainHome">Home</NavLink >
+                            <NavLink
+                                className={({ isActive }) => isActive ? "active-link" : "link"}
+                                to="/events">Events</NavLink >
+
+                            <NavLink
+                                className={({ isActive }) => isActive ? "active-link" : "link"}
+                                to="/gallery">Gallery</NavLink >
+                            <NavLink
+                                className={({ isActive }) => isActive ? "active-link" : "link"}
+                                to="/aboutus">About_Us</NavLink >
+
+                            {
+                                user && <NavLink
+                                    className={({ isActive }) => isActive ? "active-link" : "link"}
+                                    to="/membership">Member_Form</NavLink >
+                            }
+
+
+                            <NavLink
+                                className={({ isActive }) => isActive ? "active-link" : "link"}
+                                to="/mems">Members</NavLink >
+
+
+                            <NavLink
+                                className={({ isActive }) => isActive ? "active-link" : "link"}
+                                to="/newsFeed">News_Feed</NavLink >
+
+                             <NavLink
+                                    className={({ isActive }) => isActive ? "active-link" : "link"}
+                                    to="/newsForm">Add_Post</NavLink >
+                            
+
+                            {user ?
+                                <NavLink onClick={() => signOut(auth)}
+                                    className={({ isActive }) => isActive ? "active-link" : "link"}
+                                    to="/signup">logOut</NavLink >
+                                :
+                                <NavLink
+                                    className={({ isActive }) => isActive ? "active-link" : "link"}
+                                    to="/login">LogIN</NavLink >}
+
+
+
+
+                            {admin &&
+                                <>
+                                    <NavLink
+                                        className={({ isActive }) => isActive ? "active-link" : "link"}
+                                        to="/MainPanel">Admin-Panel</NavLink >,
+                        </>
+                            }
+
+
+
+                            <li>{user &&
+
+                                <div>
+                                    <div className="text-info ms-1">
+                                        <span className="fw-bold">{user.displayName}</span>
+                                        <span>
+                                            <img className='rounded-circle w-25' src={user.photoURL
+                                            } alt="" srcset="" />
+                                        </span>
+                                    </div>
+                                </div>
+
+                            }</li>
+
+                        </Nav>
+                    </Navbar.Collapse>
+                </Container>
+            </Navbar>
+        </div>
+    );
+};
+
+export default Header;
